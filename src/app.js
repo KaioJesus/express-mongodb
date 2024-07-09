@@ -1,35 +1,52 @@
 // express
 import express from 'express'; //do npm i express
+import conectaDB from './config/dbConnect.js';
+import livro from './models/Livro.js';
+
+
+
+const conexao = await conectaDB(); // instancia do banco de dados
+
+// error é uma string que vem do mongoose
+conexao.on("error", (error) =>{
+    console.error("Erro de conexão", error);
+}); // on -> relacionado a eventos -> eventos de conexão (aberta, erro)
+conexao.once("open", () => {
+    console.log("Conexão com o banco feita com sucesso!")
+}); // fazendo conexão
 
 const app = express(); //executando o express;
 app.use(express.json()); // MiddleWare -> utilizado para ter acesso as requisições e respostas;
 // express.json -> executa todas as requisições que chegam como string e são convertidos para json;
 
-const livros = [
-    {
-        id: 1,
-        titulo: "Divertida mente",
-    },
-    {
-        id: 2,
-        titulo: "Divertida mente 2",
-    }
-];
+// não será mais necessário
 
-function buscaLivro(id){
-    return livros.findIndex(livro => {
-        return livro.id === Number(id);
-    })
-}
+// const livros = [
+//     {
+//         id: 1,
+//         titulo: "Divertida mente",
+//     },
+//     {
+//         id: 2,
+//         titulo: "Divertida mente 2",
+//     }
+// ];
+
+// function buscaLivro(id){
+//     return livros.findIndex(livro => {
+//         return livro.id === Number(id);
+//     })
+// }
 
 
 //get -> pega informação existente
 app.get("/", (req, res)=>{ // dois parâmetros, a rota e requisição (req) e resposta (res)
-    res.status(200).send("Curso de Node.Js"); //recebe o status 200 e envia curso nodeJs. send -< para dados simples
+    res.status(200).send("Curso node JS"); //recebe o status 200 e envia curso nodeJs. send -< para dados simples
 })
 
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros); // enviando objetos
+app.get("/livros", async (req, res) => {
+    const listaLivros = await livro.find({}); // .find -> conecta no mongodb e acha tudo do livro
+    res.status(200).json(listaLivros); // enviando objetos
 })
 
 // pegar um livro especifico
@@ -60,3 +77,5 @@ app.delete("/livros/:id", (req, res) => {
     res.status(200).send("Livro removido com sucesso!")
 })
 export default app;
+
+// mongodb+srv://admin:admin123@cluster0.sosuxft.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

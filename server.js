@@ -6,6 +6,7 @@
 // import express from 'express';
 // import LivroController from '../controllers/livroController.js';
 
+import "dotenv/config"; // é preciso importar o dotenv no arquivo mais externo da aplicação
 import app from "./src/app.js";
 
 // criaremos um servidor local que simula um servidor da internet
